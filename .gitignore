@@ -4,4 +4,8 @@ target
 test-ledger
 **/*.rs.bk
 node_modules
+<<<<<<< HEAD
 app/node_module
+=======
+app/node_modules
+>>>>>>> ce715cd448364066b3417e25be278935e4add63e
