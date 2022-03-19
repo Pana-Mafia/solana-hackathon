@@ -5,13 +5,6 @@ import { Program, Provider, web3 } from '@project-serum/anchor';
 import idl from './idl.json';
 import {
   getPhantomWallet,
-  LedgerWalletAdapter,
-  PhantomWalletAdapter,
-  SlopeWalletAdapter,
-  SolflareWalletAdapter,
-  SolletExtensionWalletAdapter,
-  SolletWalletAdapter,
-  TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
@@ -47,39 +40,6 @@ function App() {
       connection, wallet, opts.preflightCommitment,
     );
     return provider;
-  }
-  async function createCounter() {
-    const provider = await getProvider()
-    /* create the program interface combining the idl, program ID, and provider */
-    const program = new Program(idl, programID, provider);
-    try {
-      /* interact with the program via rpc */
-      await program.rpc.create({
-        accounts: {
-          baseAccount: baseAccount.publicKey,
-          user: provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        },
-        signers: [baseAccount]
-      });
-      const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
-      console.log('account: ', account);
-      setValue(account.count.toString());
-    } catch (err) {
-      console.log("Transaction error: ", err);
-    }
-  }
-  async function increment() {
-    const provider = await getProvider();
-    const program = new Program(idl, programID, provider);
-    await program.rpc.increment({
-      accounts: {
-        baseAccount: baseAccount.publicKey
-      }
-    });
-    const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
-    console.log('account: ', account);
-    setValue(account.count.toString());
   }
   if (!wallet.connected) {
     /* If the user's wallet is not connected, display connect wallet button. */
