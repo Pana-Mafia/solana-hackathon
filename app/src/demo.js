@@ -1,27 +1,14 @@
+import logo from './logo.svg';
 import './App.css';
-import React, { FC, useMemo, useState } from 'react';
-import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
-import { Program, Provider, web3 } from '@project-serum/anchor';
-import idl from './idl.json';
+import { useState } from 'react';
+import { Connection, PublicKey } from '@solana/web3.js';
 import {
-  getPhantomWallet,
-  LedgerWalletAdapter,
-  PhantomWalletAdapter,
-  SlopeWalletAdapter,
-  SolflareWalletAdapter,
-  SolletExtensionWalletAdapter,
-  SolletWalletAdapter,
-  TorusWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
+  Program, Provider, web3
+} from '@project-serum/anchor';
+import idl from './idl.json';
+import { getPhantomWallet } from '@solana/wallet-adapter-wallets';
 import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { WalletModalProvider, WalletMultiButton, WalletDisconnectButton } from '@solana/wallet-adapter-react-ui';
-
-// MUI UI components
-import { Button, Input, TextField, InputAdornment } from '@mui/material';
-
-// Default styles that can be overridden by your app
-require('@solana/wallet-adapter-react-ui/styles.css');
+import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 const wallets = [
   /* view list of available wallets at https://github.com/solana-labs/wallet-adapter#wallets */
@@ -36,7 +23,6 @@ const opts = {
 const programID = new PublicKey(idl.metadata.address);
 function App() {
   const [value, setValue] = useState(null);
-  const isConnectedToWallet = value;
   const wallet = useWallet();
   async function getProvider() {
     /* create the provider and return it to the caller */
@@ -49,7 +35,7 @@ function App() {
     return provider;
   }
 
-  // トークン発行処理
+  // 処理を追加
   const anchor = require("@project-serum/anchor");
   const assert = require("assert");
   const serumCmn = require("@project-serum/common");
@@ -60,6 +46,7 @@ function App() {
   );
 
   async function getTokenAccount(provider, addr) {
+    console.log("getokenacc")
     return await serumCmn.getTokenAccount(provider, addr);
   }
 
@@ -86,6 +73,7 @@ function App() {
     return mint.publicKey;
   }
 
+  console.log("２")
   async function createMintInstructions(provider, authority, mint) {
     let instructions = [
       anchor.web3.SystemProgram.createAccount({
@@ -141,8 +129,8 @@ function App() {
   }
 
   // 処理追加終わり
+  console.log("３")
   async function mintNewToken() {
-    console.log("mintNewToken is called.")
 
     const anchor = require("@project-serum/anchor");
     const assert = require("assert");
@@ -150,13 +138,12 @@ function App() {
     const serumCmn = require("@project-serum/common");
     const TokenInstructions = require("@project-serum/serum").TokenInstructions;
 
-    let mint = 1;
-    let from = '2junxGTVZLmitbrS7qNHWLgPe9QLsApYaujsUFwsj5ym';
-    let to = '2junxGTVZLmitbrS7qNHWLgPe9QLsApYaujsUFwsj5ym';
+    let mint = 100;
+    let from = null;
+    let to = null;
 
 
     const provider = await getProvider()
-    console.log()
     const program = new Program(idl, programID, provider);
 
     // mint = await createMint(provider);
@@ -164,6 +151,7 @@ function App() {
     // to = await createTokenAccount(provider, mint, provider.wallet.publicKey);
 
     try {
+      console.log("4")
       await program.rpc.proxyMintTo(new anchor.BN(1000), {
         accounts: {
           authority: provider.wallet.publicKey,
@@ -173,66 +161,71 @@ function App() {
         },
       })
 
+      console.log("成功")
       const fromAccount = await getTokenAccount(provider, from);
       assert.ok(fromAccount.amount.eq(new anchor.BN(1000)));
 
     } catch (err) {
-      console.error(err)
+      console.log("5")
+      console.log("Transaction error: ", err);
     }
+  }
+
+  async function createCounter() {
+    const provider = await getProvider()
+    /* create the program interface combining the idl, program ID, and provider */
+    const program = new Program(idl, programID, provider);
+    try {
+      /* interact with the program via rpc */
+      await program.rpc.create({
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+          user: provider.wallet.publicKey,
+          systemProgram: SystemProgram.programId,
+        },
+        signers: [baseAccount]
+      });
+      const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+      console.log('account: ', account);
+      setValue(account.count.toString());
+    } catch (err) {
+      console.log("Transaction error: ", err);
+    }
+  }
+  async function increment() {
+    const provider = await getProvider();
+    const program = new Program(idl, programID, provider);
+    await program.rpc.increment({
+      accounts: {
+        baseAccount: baseAccount.publicKey
+      }
+    });
+    const account = await program.account.baseAccount.fetch(baseAccount.publicKey);
+    console.log('account: ', account);
+    setValue(account.count.toString());
   }
 
   if (!wallet.connected) {
     /* If the user's wallet is not connected, display connect wallet button. */
     return (
-      <div className="all-wrapper" style={{ color: '#FFFFFF' }} >
-        <div className="content-wrapper">
-          <div className="flex-center flex-col height-100" style={{ textAlign: 'center' }}>
-            <div>
-              <h1>Walletを接続してください。</h1>
-              <WalletMultiButton style={{ display: 'initial', textAlign: 'center' }} />
-            </div>
-          </div>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '100px' }}>
+        <WalletMultiButton />
       </div>
     )
   } else {
     return (
-      <div className="all-wrapper" style={{ color: '#FFFFFF' }} >
-        <div className="content-wrapper">
-          <div className="flex-align-center flex-col">
-            <div>
-              <h1 className='mg-top-30pct'>トークンの発行総数を決めてください。</h1>
-              <div style={{ backgroundColor: 'lightgray', padding: '2em' }} >
-                <TextField
-                  label="発行総数"
-                  fullWidth
-                  id="outlined-end-adornment"
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">個</InputAdornment>,
-                  }}
-                />
-              </div>
-              <br />
-              <h1>成し遂げたい事を記載してください。</h1>
-              <div style={{ backgroundColor: 'lightgray', padding: '2em' }} >
-                <TextField
-                  label="内容"
-                  fullWidth
-                  id="outlined-end-adornment"
-                />
-              </div>
-              <br />
-              <div style={{ padding: '2em' }} >
-                <Button variant="contained" color="success" onClick={mintNewToken}>
-                  トークンを発行する
-                </Button>
-              </div>
-              {/* ここに発行ボタンを入れる */}
-              <br />
-              <h1 className='mg-top-30pct'></h1>
-              <WalletDisconnectButton />
-            </div>
-          </div>
+      <div className="App">
+        <div>
+          {
+            !value && (<button onClick={mintNewToken}>Create token</button>)
+          }
+          {
+            value && value >= Number(0) ? (
+              <h2>{value}</h2>
+            ) : (
+              <h3>Please create the counter.</h3>
+            )
+          }
         </div>
       </div>
     );
