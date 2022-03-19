@@ -1,3 +1,48 @@
+.reset-css {
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+.mg-top-30pct {
+  margin-top: 3em;
+}
+
+.all-wrapper {
+  background-color: #000000;
+}
+
+.content-wrapper {
+  max-width: 960px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background-color: #232323;
+}
+
+.height-100 {
+  height: 100vh !important;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-justify-center {
+  display: flex;
+  justify-content: center;
+}
+
+.flex-align-center {
+  display: flex;
+  align-items: center;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
 .App {
   text-align: center;
 }
