@@ -6,7 +6,7 @@ describe('tokenapp', () => {
   anchor.setProvider(provider);
   const program = anchor.workspace.Tokenapp;
 
-  let mint = null;
+  let mint = 100;
   let from = null;
   let to = null;
 
