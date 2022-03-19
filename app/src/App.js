@@ -1,17 +1,17 @@
 import './App.css';
-import React, { FC, useMemo, useState } from 'react';
-import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
-import { Program, Provider, web3 } from '@project-serum/anchor';
-import idl from './idl.json';
+import React from 'react';
+// import { Connection } from '@solana/web3.js';
+// import { Provider } from '@project-serum/anchor';
+// import idl from './idl.json';
 import {
   getPhantomWallet,
 } from '@solana/wallet-adapter-wallets';
 import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+// import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider, WalletMultiButton, WalletDisconnectButton } from '@solana/wallet-adapter-react-ui';
 
 // MUI UI components
-import { Button, Input, TextField, InputAdornment } from '@mui/material';
+import { Button, TextField, InputAdornment } from '@mui/material';
 
 // Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -20,27 +20,27 @@ const wallets = [
   /* view list of available wallets at https://github.com/solana-labs/wallet-adapter#wallets */
   getPhantomWallet()
 ]
-const { SystemProgram, Keypair } = web3;
+// const { Keypair } = web3;
 /* create an account  */
-const baseAccount = Keypair.generate();
-const opts = {
-  preflightCommitment: "processed"
-}
-const programID = new PublicKey(idl.metadata.address);
+// const baseAccount = Keypair.generate();
+// const opts = {
+//   preflightCommitment: "processed"
+// }
+// const programID = new PublicKey(idl.metadata.address);
 function App() {
-  const [value, setValue] = useState(null);
-  const isConnectedToWallet = value;
+  // const [value] = useState(null);
+  // const isConnectedToWallet = value;
   const wallet = useWallet();
-  async function getProvider() {
-    /* create the provider and return it to the caller */
-    /* network set to local network for now */
-    const network = "http://127.0.0.1:8899";
-    const connection = new Connection(network, opts.preflightCommitment);
-    const provider = new Provider(
-      connection, wallet, opts.preflightCommitment,
-    );
-    return provider;
-  }
+  // async function getProvider() {
+  //   /* create the provider and return it to the caller */
+  //   /* network set to local network for now */
+  //   const network = "http://127.0.0.1:8899";
+  //   const connection = new Connection(network, opts.preflightCommitment);
+  //   const provider = new Provider(
+  //     connection, wallet, opts.preflightCommitment,
+  //   );
+  //   return provider;
+  // }
   if (!wallet.connected) {
     /* If the user's wallet is not connected, display connect wallet button. */
     return (
@@ -89,7 +89,7 @@ function App() {
               </div>
               {/* ここに発行ボタンを入れる */}
               <br />
-              <h1 className='mg-top-30pct'></h1>
+              <h1 className='mg-top-30pct'>Walletとの接続を切る。</h1>
               <WalletDisconnectButton />
             </div>
           </div>
