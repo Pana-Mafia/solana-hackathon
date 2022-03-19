@@ -1,17 +1,22 @@
 import './App.css';
 import React from 'react';
-// import { Connection } from '@solana/web3.js';
-// import { Provider } from '@project-serum/anchor';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { Program, Provider } from '@project-serum/anchor';
 import idl from './idl.json';
 import {
   getPhantomWallet,
 } from '@solana/wallet-adapter-wallets';
 import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-adapter-react';
-// import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { WalletModalProvider, WalletMultiButton, WalletDisconnectButton } from '@solana/wallet-adapter-react-ui';
 
 // MUI UI components
 import { Button, TextField, InputAdornment } from '@mui/material';
+
+// import { Connection } from '@solana/web3.js';
+// import { Provider } from '@project-serum/anchor';
+// import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+
+// MUI UI components
 
 // Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -23,9 +28,9 @@ const wallets = [
 // const { Keypair } = web3;
 /* create an account  */
 // const baseAccount = Keypair.generate();
-// const opts = {
-//   preflightCommitment: "processed"
-// }
+const opts = {
+  preflightCommitment: "processed"
+}
 const programID = new PublicKey(idl.metadata.address);
 function App() {
   // const [value] = useState(null);
@@ -43,108 +48,107 @@ function App() {
   }
 
   const anchor = require("@project-serum/anchor");
-  const assert = require("assert");
   const serumCmn = require("@project-serum/common");
-  const TokenInstructions = require("@project-serum/serum").TokenInstructions;
+  // const TokenInstructions = require("@project-serum/serum").TokenInstructions;
 
-  const TOKEN_PROGRAM_ID = new anchor.web3.PublicKey(
-    TokenInstructions.TOKEN_PROGRAM_ID.toString()
-  );
+  // const TOKEN_PROGRAM_ID = new anchor.web3.PublicKey(
+  //   TokenInstructions.TOKEN_PROGRAM_ID.toString()
+  // );
 
   async function getTokenAccount(provider, addr) {
     return await serumCmn.getTokenAccount(provider, addr);
   }
 
-  async function getMintInfo(provider, mintAddr) {
-    return await serumCmn.getMintInfo(provider, mintAddr);
-  }
+  // async function getMintInfo(provider, mintAddr) {
+  //   return await serumCmn.getMintInfo(provider, mintAddr);
+  // }
 
-  async function createMint(provider, authority) {
-    if (authority === undefined) {
-      authority = provider.wallet.publicKey;
-    }
-    const mint = anchor.web3.Keypair.generate();
-    const instructions = await createMintInstructions(
-      provider,
-      authority,
-      mint.publicKey
-    );
+  // async function createMint(provider, authority) {
+  //   if (authority === undefined) {
+  //     authority = provider.wallet.publicKey;
+  //   }
+  //   const mint = anchor.web3.Keypair.generate();
+  //   const instructions = await createMintInstructions(
+  //     provider,
+  //     authority,
+  //     mint.publicKey
+  //   );
 
-    const tx = new anchor.web3.Transaction();
-    tx.add(...instructions);
+  //   const tx = new anchor.web3.Transaction();
+  //   tx.add(...instructions);
 
-    await provider.send(tx, [mint]);
+  //   await provider.send(tx, [mint]);
 
-    return mint.publicKey;
-  }
+  //   return mint.publicKey;
+  // }
 
-  async function createMintInstructions(provider, authority, mint) {
-    let instructions = [
-      anchor.web3.SystemProgram.createAccount({
-        fromPubkey: provider.wallet.publicKey,
-        newAccountPubkey: mint,
-        space: 82,
-        lamports: await provider.connection.getMinimumBalanceForRentExemption(82),
-        programId: TOKEN_PROGRAM_ID,
-      }),
-      TokenInstructions.initializeMint({
-        mint,
-        decimals: 0,
-        mintAuthority: authority,
-      }),
-    ];
-    return instructions;
-  }
+  // async function createMintInstructions(provider, authority, mint) {
+  //   let instructions = [
+  //     anchor.web3.SystemProgram.createAccount({
+  //       fromPubkey: provider.wallet.publicKey,
+  //       newAccountPubkey: mint,
+  //       space: 82,
+  //       lamports: await provider.connection.getMinimumBalanceForRentExemption(82),
+  //       programId: TOKEN_PROGRAM_ID,
+  //     }),
+  //     TokenInstructions.initializeMint({
+  //       mint,
+  //       decimals: 0,
+  //       mintAuthority: authority,
+  //     }),
+  //   ];
+  //   return instructions;
+  // }
 
-  async function createTokenAccount(provider, mint, owner) {
-    const vault = anchor.web3.Keypair.generate();
-    const tx = new anchor.web3.Transaction();
-    tx.add(
-      ...(await createTokenAccountInstrs(provider, vault.publicKey, mint, owner))
-    );
-    await provider.send(tx, [vault]);
-    return vault.publicKey;
-  }
+  // async function createTokenAccount(provider, mint, owner) {
+  //   const vault = anchor.web3.Keypair.generate();
+  //   const tx = new anchor.web3.Transaction();
+  //   tx.add(
+  //     ...(await createTokenAccountInstrs(provider, vault.publicKey, mint, owner))
+  //   );
+  //   await provider.send(tx, [vault]);
+  //   return vault.publicKey;
+  // }
 
-  async function createTokenAccountInstrs(
-    provider,
-    newAccountPubkey,
-    mint,
-    owner,
-    lamports
-  ) {
-    if (lamports === undefined) {
-      lamports = await provider.connection.getMinimumBalanceForRentExemption(165);
-    }
-    return [
-      anchor.web3.SystemProgram.createAccount({
-        fromPubkey: provider.wallet.publicKey,
-        newAccountPubkey,
-        space: 165,
-        lamports,
-        programId: TOKEN_PROGRAM_ID,
-      }),
-      TokenInstructions.initializeAccount({
-        account: newAccountPubkey,
-        mint,
-        owner,
-      }),
-    ];
-  }
+  // async function createTokenAccountInstrs(
+  //   provider,
+  //   newAccountPubkey,
+  //   mint,
+  //   owner,
+  //   lamports
+  // ) {
+  //   if (lamports === undefined) {
+  //     lamports = await provider.connection.getMinimumBalanceForRentExemption(165);
+  //   }
+  //   return [
+  //     anchor.web3.SystemProgram.createAccount({
+  //       fromPubkey: provider.wallet.publicKey,
+  //       newAccountPubkey,
+  //       space: 165,
+  //       lamports,
+  //       programId: TOKEN_PROGRAM_ID,
+  //     }),
+  //     TokenInstructions.initializeAccount({
+  //       account: newAccountPubkey,
+  //       mint,
+  //       owner,
+  //     }),
+  //   ];
+  // }
 
   // 処理追加終わり
   async function mintNewToken() {
     console.log("mintNewToken is called.")
 
-    const anchor = require("@project-serum/anchor");
+    // const anchor = require("@project-serum/anchor");
     const assert = require("assert");
 
-    const serumCmn = require("@project-serum/common");
+    // const serumCmn = require("@project-serum/common");
     const TokenInstructions = require("@project-serum/serum").TokenInstructions;
 
     let mint = 1;
-    let from = '2junxGTVZLmitbrS7qNHWLgPe9QLsApYaujsUFwsj5ym';
-    let to = '2junxGTVZLmitbrS7qNHWLgPe9QLsApYaujsUFwsj5ym';
+    let from = null;
+    // let to = null;
 
 
     const provider = await getProvider()
@@ -215,7 +219,7 @@ function App() {
               </div>
               <br />
               <div style={{ padding: '2em' }} >
-                <Button variant="contained" color="success" onClick={() => { alert('clicked'); }}>
+                <Button variant="contained" color="success" onClick={mintNewToken}>
                   トークンを発行する
                 </Button>
               </div>
