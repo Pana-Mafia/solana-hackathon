@@ -2,11 +2,12 @@ const anchor = require("@project-serum/anchor");
 const assert = require("assert");
 
 describe('tokenapp', () => {
-  const provider = anchor.Provider.local();
+  const provider = anchor.Provider.env();
   anchor.setProvider(provider);
+  // anchor.setProvider(anchor.Provider.env());
   const program = anchor.workspace.Tokenapp;
 
-  let mint = 100;
+  let mint = null;
   let from = null;
   let to = null;
 
@@ -62,23 +63,23 @@ describe('tokenapp', () => {
     assert.ok(toAccount.amount.eq(new anchor.BN(50)));
   });
 
-  it("Set new mint authority", async () => {
-    const newMintAuthority = anchor.web3.Keypair.generate();
-    await program.rpc.proxySetAuthority(
-      { mintTokens: {} },
-      newMintAuthority.publicKey,
-      {
-        accounts: {
-          accountOrMint: mint,
-          currentAuthority: provider.wallet.publicKey,
-          tokenProgram: TokenInstructions.TOKEN_PROGRAM_ID,
-        },
-      }
-    );
+  // it("Set new mint authority", async () => {
+  //   const newMintAuthority = anchor.web3.Keypair.generate();
+  //   await program.rpc.proxySetAuthority(
+  //     { mintTokens: {} },
+  //     newMintAuthority.publicKey,
+  //     {
+  //       accounts: {
+  //         accountOrMint: mint,
+  //         currentAuthority: provider.wallet.publicKey,
+  //         tokenProgram: TokenInstructions.TOKEN_PROGRAM_ID,
+  //       },
+  //     }
+  //   );
 
-    const mintInfo = await getMintInfo(provider, mint);
-    assert.ok(mintInfo.mintAuthority.equals(newMintAuthority.publicKey));
-  });
+  //   const mintInfo = await getMintInfo(provider, mint);
+  //   assert.ok(mintInfo.mintAuthority.equals(newMintAuthority.publicKey));
+  // });
 
 });
 
@@ -109,7 +110,7 @@ async function createMint(provider, authority) {
   );
 
   const tx = new anchor.web3.Transaction();
-  tx.add(...instructions);
+  await tx.add(...instructions);
 
   await provider.send(tx, [mint]);
 

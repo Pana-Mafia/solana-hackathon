@@ -1,13 +1,19 @@
 [features]
 seeds = false
 [programs.localnet]
-tokenapp = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+tokenapp = "AshDfQYDD4cT9TeZW7LfS5JXfHRHyGpyjZsJUqfuaAGh"
+
+[programs.devnet]
+tokenapp = "AshDfQYDD4cT9TeZW7LfS5JXfHRHyGpyjZsJUqfuaAGh"
+
+[programs.mainnet]
+tokenapp = "AshDfQYDD4cT9TeZW7LfS5JXfHRHyGpyjZsJUqfuaAGh"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/gtyuki/.config/solana/id.json"
 
 [scripts]
