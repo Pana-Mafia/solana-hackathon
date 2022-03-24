@@ -50,7 +50,7 @@ function App() {
 
   // トークン発行処理
   const anchor = require("@project-serum/anchor");
-  const assert = require("assert");
+  // const assert = require("assert");
   const serumCmn = require("@project-serum/common");
   const TokenInstructions = require("@project-serum/serum").TokenInstructions;
 
@@ -62,9 +62,9 @@ function App() {
     return await serumCmn.getTokenAccount(provider, addr);
   }
 
-  async function getMintInfo(provider, mintAddr) {
-    return await serumCmn.getMintInfo(provider, mintAddr);
-  }
+  // async function getMintInfo(provider, mintAddr) {
+  //   return await serumCmn.getMintInfo(provider, mintAddr);
+  // }
 
   async function createMint(provider, authority) {
     if (authority === undefined) {
@@ -151,12 +151,12 @@ function App() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
 
-    const serumCmn = require("@project-serum/common");
+    // const serumCmn = require("@project-serum/common");
     const TokenInstructions = require("@project-serum/serum").TokenInstructions;
 
     let mint = null;
     let from = null;
-    let to = null;
+    // let to = null;
 
     mint = await createMint(provider);
     // from = provider.wallet.publicKey
@@ -195,7 +195,7 @@ function App() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
 
-    const serumCmn = require("@project-serum/common");
+    // const serumCmn = require("@project-serum/common");
     const TokenInstructions = require("@project-serum/serum").TokenInstructions;
 
     let mint = null;
